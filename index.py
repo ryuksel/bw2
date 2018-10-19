@@ -7,7 +7,7 @@ bw_version=1.01 #Version
 glo_email="" #Email
 glo_password="" #Password
 glo_info="" #Login information
-
+xglobar=""
 import sys
 import requests
 import pandas as pd
