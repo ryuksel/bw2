@@ -34,11 +34,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        ########################TRADER BOX#############################
         self.trader_box1 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.trader_box1.setObjectName("trader_box1")
-        # self.trader_box2 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
-        # self.trader_box2.setObjectName("trader_box2")
         self.verticalLayout_2.addWidget(self.trader_box1)
+        self.trader_box1.hide()
+        self.trader_box2 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box2.setObjectName("trader_box2")
+        self.verticalLayout_2.addWidget(self.trader_box2)
+        self.trader_box2.hide()
+        self.trader_box3 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box3.setObjectName("trader_box3")
+        self.verticalLayout_2.addWidget(self.trader_box3)
+        self.trader_box3.hide()        
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
@@ -138,7 +146,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "BinanceWinner Auto Trade Program -" + glo_email))
         self.groupBox.setTitle(_translate("MainWindow", "1. Trader Selection"))
-        self.trader_box1.setText(_translate("MainWindow", "CheckBox"))
+        #self.trader_box1.setText(_translate("MainWindow", "CheckBox"))
         self.groupBox_2.setTitle(_translate("MainWindow", "2. Buy Settings"))
         self.buy_limitorder_input.setText(_translate("MainWindow", "99"))
         self.buy_limitorder.setText(_translate("MainWindow", "Limit Order        /100 (Trader Price)"))
@@ -165,8 +173,26 @@ class Ui_MainWindow(object):
         ###Start Main codes
 
         print(glo_info)
-
-
+        a=1
+        for b in glo_info["trader_name"]:
+            if a==1:
+                self.trader_box1.setText(_translate("MainWindow", str(b)))
+                self.trader_box1.show()
+            elif a==2:
+                self.trader_box2.setText(_translate("MainWindow", str(b)))
+                self.trader_box2.show()
+            elif a==3:
+                self.trader_box3.setText(_translate("MainWindow", str(b)))    
+                self.trader_box3.show()
+            a += 1
+            
+        
+        
+        #self.checks_add =  QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        #self.checks_add.setObjectName("checks_add")
+        #self.checks_add = self.checks_add+self.verticalLayout_2.addWidget(self.checks_add)
+        
+        
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
