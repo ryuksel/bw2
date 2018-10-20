@@ -3,11 +3,18 @@
 # Version : 1.01
 #
 
+
+##Global vars
 bw_version=1.01 #Version 
 glo_email="" #Email
 glo_password="" #Password
 glo_info="" #Login information
 active_trader_list = set() #Active Traders
+buy_choice= int
+buy_choice_limit_order= float
+buy_diff = float
+sell_choice= int
+
 
 
 import sys
@@ -261,11 +268,12 @@ class Ui_MainWindow(object):
             self.pushButton.setText("Stop")
             self.pushButton.setStyleSheet("background-color:rgb(252, 76, 76);\n" "color: #FFF;")
             print("Start")
-            self.trader_box2.setChecked(True)
+
+
+            #######Trader selections
             global active_trader_list
             if self.trader_box1.isChecked()== True:
                 active_trader_list.add(self.trader_box1.text())
-            #print(active_trader_list)
             if self.trader_box2.isChecked()== True:
                 active_trader_list.add(self.trader_box2.text())
             if self.trader_box3.isChecked()== True:
@@ -285,8 +293,7 @@ class Ui_MainWindow(object):
             if self.trader_box10.isChecked()== True:
                 active_trader_list.add(self.trader_box10.text())
             print(active_trader_list)
-
-
+            
 
             self.trader_box1.setEnabled(False)
             self.trader_box2.setEnabled(False)
@@ -298,12 +305,28 @@ class Ui_MainWindow(object):
             self.trader_box8.setEnabled(False)
             self.trader_box9.setEnabled(False)
             self.trader_box10.setEnabled(False)
+            
+            ####Buy choice            
+            global buy_choice
+            if self.buy_marketbuy.isChecked()== True:
+                buy_choice = 1 
+            if self.buy_bestoffer.isChecked()== True:
+                buy_choice = 2 
+            if self.buy_limitorder.isChecked()== True:
+                buy_choice = 3 
+                global buy_choice_limit_order
+                buy_choice_limit_order = self.buy_limitorder_input.text()
+                print(buy_choice_limit_order)
+            global buy_diff
+            buy_diff = self.buy_trader_dif.text()
+            print(buy_diff)
         else:
             self.pushButton.setText("Run")
             self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
             print("Stop")
             
             
+            #######Trader selections
             active_trader_list = None
             active_trader_list = set()
             self.trader_box1.setEnabled(True)
