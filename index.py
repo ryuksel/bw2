@@ -7,7 +7,7 @@ bw_version=1.01 #Version
 glo_email="" #Email
 glo_password="" #Password
 glo_info="" #Login information
-xglobar=""
+active_trader_list = set() #Active Traders
 import sys
 import requests
 import pandas as pd
@@ -247,9 +247,9 @@ class Ui_MainWindow(object):
                 self.trader_box10.setText(_translate("MainWindow", str(b)))
                 self.trader_box10.show()
             a += 1
-            
-        
-        
+            #self.trader_box10.stateChanged.connect(self.clickBox)
+
+
         #self.checks_add =  QtWidgets.QCheckBox(self.verticalLayoutWidget)
         #self.checks_add.setObjectName("checks_add")
         #self.checks_add = self.checks_add+self.verticalLayout_2.addWidget(self.checks_add)
@@ -259,10 +259,41 @@ class Ui_MainWindow(object):
             self.pushButton.setText("Stop")
             self.pushButton.setStyleSheet("background-color:rgb(252, 76, 76);\n" "color: #FFF;")
             print("Start")
+            self.trader_box2.setChecked(True)
+            if self.trader_box1.isChecked()== True:
+                active_trader_list.add(self.trader_box1.text())
+            print(active_trader_list)
+
+
+
+            self.trader_box1.setEnabled(False)
+            self.trader_box2.setEnabled(False)
+            self.trader_box3.setEnabled(False)
+            self.trader_box4.setEnabled(False)
+            self.trader_box5.setEnabled(False)
+            self.trader_box6.setEnabled(False)
+            self.trader_box7.setEnabled(False)
+            self.trader_box8.setEnabled(False)
+            self.trader_box9.setEnabled(False)
+            self.trader_box10.setEnabled(False)
         else:
             self.pushButton.setText("Run")
             self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
             print("Stop")
+
+            self.trader_box1.setEnabled(True)
+            self.trader_box2.setEnabled(True)
+            self.trader_box3.setEnabled(True)
+            self.trader_box4.setEnabled(True)
+            self.trader_box5.setEnabled(True)
+            self.trader_box6.setEnabled(True)
+            self.trader_box7.setEnabled(True)
+            self.trader_box8.setEnabled(True)
+            self.trader_box9.setEnabled(True)
+            self.trader_box10.setEnabled(True)
+
+
+
         #print(self.pushButton.text())
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
