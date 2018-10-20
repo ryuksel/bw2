@@ -34,19 +34,59 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        ########################TRADER BOX#############################
+        ########################TRADER BOXS#############################
         self.trader_box1 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.trader_box1.setObjectName("trader_box1")
         self.verticalLayout_2.addWidget(self.trader_box1)
         self.trader_box1.hide()
+
         self.trader_box2 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.trader_box2.setObjectName("trader_box2")
         self.verticalLayout_2.addWidget(self.trader_box2)
         self.trader_box2.hide()
+
         self.trader_box3 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.trader_box3.setObjectName("trader_box3")
         self.verticalLayout_2.addWidget(self.trader_box3)
-        self.trader_box3.hide()        
+        self.trader_box3.hide()
+
+        self.trader_box4 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box4.setObjectName("trader_box3")
+        self.verticalLayout_2.addWidget(self.trader_box4)
+        self.trader_box4.hide()
+
+        self.trader_box5 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box5.setObjectName("trader_box5")
+        self.verticalLayout_2.addWidget(self.trader_box5)
+        self.trader_box5.hide()
+
+        self.trader_box6 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box6.setObjectName("trader_box6")
+        self.verticalLayout_2.addWidget(self.trader_box6)
+        self.trader_box6.hide()
+
+
+        self.trader_box7 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box7.setObjectName("trader_box7")
+        self.verticalLayout_2.addWidget(self.trader_box7)
+        self.trader_box7.hide()
+
+        self.trader_box8 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box8.setObjectName("trader_box8")
+        self.verticalLayout_2.addWidget(self.trader_box8)
+        self.trader_box8.hide()
+
+        self.trader_box9 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box9.setObjectName("trader_box9")
+        self.verticalLayout_2.addWidget(self.trader_box9)
+        self.trader_box9.hide()
+
+        self.trader_box10 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.trader_box10.setObjectName("trader_box10")
+        self.verticalLayout_2.addWidget(self.trader_box10)
+        self.trader_box10.hide()
+
+        ########################TRADER BOXS END#############################
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
@@ -184,6 +224,27 @@ class Ui_MainWindow(object):
             elif a==3:
                 self.trader_box3.setText(_translate("MainWindow", str(b)))    
                 self.trader_box3.show()
+            elif a == 4:
+                self.trader_box4.setText(_translate("MainWindow", str(b)))
+                self.trader_box4.show()
+            elif a==5:
+                self.trader_box5.setText(_translate("MainWindow", str(b)))
+                self.trader_box5.show()
+            elif a == 6:
+                self.trader_box6.setText(_translate("MainWindow", str(b)))
+                self.trader_box6.show()
+            elif a == 7:
+                self.trader_box7.setText(_translate("MainWindow", str(b)))
+                self.trader_box7.show()
+            elif a == 8:
+                self.trader_box8.setText(_translate("MainWindow", str(b)))
+                self.trader_box8.show()
+            elif a == 9:
+                self.trader_box9.setText(_translate("MainWindow", str(b)))
+                self.trader_box9.show()
+            elif a == 10:
+                self.trader_box10.setText(_translate("MainWindow", str(b)))
+                self.trader_box10.show()
             a += 1
             
         
