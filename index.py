@@ -184,7 +184,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "BinanceWinner Auto Trade Program -" + glo_email))
+        MainWindow.setWindowTitle(_translate("MainWindow", "BinanceWinner Auto Trade Program - " + glo_email))
         self.groupBox.setTitle(_translate("MainWindow", "1. Trader Selection"))
         #self.trader_box1.setText(_translate("MainWindow", "CheckBox"))
         self.groupBox_2.setTitle(_translate("MainWindow", "2. Buy Settings"))
@@ -205,6 +205,7 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Max.Allocated  BTC :"))
         self.max_btc.setText(_translate("MainWindow", "0.5"))
         self.pushButton.setText(_translate("MainWindow", "Run"))
+        self.pushButton.clicked.connect(self.run_button)
         self.groupBox_5.setTitle(_translate("MainWindow", "Status"))
         self.texti_problem.setText(
             _translate("MainWindow", "<html><head/><body><p>2018 © BinanceWinner.com</p></body></html>"))
@@ -253,7 +254,16 @@ class Ui_MainWindow(object):
         #self.checks_add.setObjectName("checks_add")
         #self.checks_add = self.checks_add+self.verticalLayout_2.addWidget(self.checks_add)
         
-        
+    def run_button(self):
+        if self.pushButton.text()=="Run":
+            self.pushButton.setText("Stop")
+            self.pushButton.setStyleSheet("background-color:rgb(252, 76, 76);\n" "color: #FFF;")
+            print("Start")
+        else:
+            self.pushButton.setText("Run")
+            self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
+            print("Stop")
+        #print(self.pushButton.text())
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
