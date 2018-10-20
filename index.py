@@ -8,6 +8,8 @@ glo_email="" #Email
 glo_password="" #Password
 glo_info="" #Login information
 active_trader_list = set() #Active Traders
+
+
 import sys
 import requests
 import pandas as pd
@@ -260,8 +262,28 @@ class Ui_MainWindow(object):
             self.pushButton.setStyleSheet("background-color:rgb(252, 76, 76);\n" "color: #FFF;")
             print("Start")
             self.trader_box2.setChecked(True)
+            global active_trader_list
             if self.trader_box1.isChecked()== True:
                 active_trader_list.add(self.trader_box1.text())
+            #print(active_trader_list)
+            if self.trader_box2.isChecked()== True:
+                active_trader_list.add(self.trader_box2.text())
+            if self.trader_box3.isChecked()== True:
+                active_trader_list.add(self.trader_box3.text())
+            if self.trader_box4.isChecked()== True:
+                active_trader_list.add(self.trader_box4.text())
+            if self.trader_box5.isChecked()== True:
+                active_trader_list.add(self.trader_box5.text())
+            if self.trader_box6.isChecked()== True:
+                active_trader_list.add(self.trader_box6.text())
+            if self.trader_box7.isChecked()== True:
+                active_trader_list.add(self.trader_box7.text())
+            if self.trader_box8.isChecked()== True:
+                active_trader_list.add(self.trader_box8.text())
+            if self.trader_box9.isChecked()== True:
+                active_trader_list.add(self.trader_box9.text())
+            if self.trader_box10.isChecked()== True:
+                active_trader_list.add(self.trader_box10.text())
             print(active_trader_list)
 
 
@@ -280,7 +302,10 @@ class Ui_MainWindow(object):
             self.pushButton.setText("Run")
             self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
             print("Stop")
-
+            
+            
+            active_trader_list = None
+            active_trader_list = set()
             self.trader_box1.setEnabled(True)
             self.trader_box2.setEnabled(True)
             self.trader_box3.setEnabled(True)
