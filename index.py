@@ -74,7 +74,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.trader_box6)
         self.trader_box6.hide()
 
-
         self.trader_box7 = QtWidgets.QCheckBox(self.verticalLayoutWidget)
         self.trader_box7.setObjectName("trader_box7")
         self.verticalLayout_2.addWidget(self.trader_box7)
@@ -295,6 +294,34 @@ class Ui_MainWindow(object):
             print(active_trader_list)
             
 
+
+            ####Buy choice            
+            global buy_choice
+            if self.buy_marketbuy.isChecked()== True:
+                buy_choice = 1 
+            elif self.buy_bestoffer.isChecked()== True:
+                buy_choice = 2 
+            elif self.buy_limitorder.isChecked()== True:
+                buy_choice = 3 
+                global buy_choice_limit_order
+                buy_choice_limit_order = self.buy_limitorder_input.text()
+            global buy_diff
+            buy_diff = self.buy_trader_dif.text()
+
+
+
+            ####Sell Choice
+            global sell_choice
+            if self.sell_marketsell.isChecked() == True:
+                sell_choice = 1
+            elif self.sell_bestoffer.isChecked() == True:
+                sell_choice = 2
+            print(sell_choice)
+
+
+
+
+
             self.trader_box1.setEnabled(False)
             self.trader_box2.setEnabled(False)
             self.trader_box3.setEnabled(False)
@@ -305,21 +332,20 @@ class Ui_MainWindow(object):
             self.trader_box8.setEnabled(False)
             self.trader_box9.setEnabled(False)
             self.trader_box10.setEnabled(False)
-            
-            ####Buy choice            
-            global buy_choice
-            if self.buy_marketbuy.isChecked()== True:
-                buy_choice = 1 
-            if self.buy_bestoffer.isChecked()== True:
-                buy_choice = 2 
-            if self.buy_limitorder.isChecked()== True:
-                buy_choice = 3 
-                global buy_choice_limit_order
-                buy_choice_limit_order = self.buy_limitorder_input.text()
-                print(buy_choice_limit_order)
-            global buy_diff
-            buy_diff = self.buy_trader_dif.text()
-            print(buy_diff)
+            self.buy_marketbuy.setEnabled(False)
+            self.buy_bestoffer.setEnabled(False)
+            self.buy_limitorder.setEnabled(False)
+            self.buy_limitorder_input.setEnabled(False)
+            self.buy_trader_dif.setEnabled(False)
+            self.sell_marketsell.setEnabled(False)
+            self.sell_bestoffer.setEnabled(False)
+            self.key_api.setEnabled(False)
+            self.key_secret.setEnabled(False)
+            self.max_btc.setEnabled(False)
+
+
+
+
         else:
             self.pushButton.setText("Run")
             self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
@@ -329,6 +355,7 @@ class Ui_MainWindow(object):
             #######Trader selections
             active_trader_list = None
             active_trader_list = set()
+
             self.trader_box1.setEnabled(True)
             self.trader_box2.setEnabled(True)
             self.trader_box3.setEnabled(True)
@@ -339,8 +366,16 @@ class Ui_MainWindow(object):
             self.trader_box8.setEnabled(True)
             self.trader_box9.setEnabled(True)
             self.trader_box10.setEnabled(True)
-
-
+            self.buy_marketbuy.setEnabled(True)
+            self.buy_bestoffer.setEnabled(True)
+            self.buy_limitorder.setEnabled(True)
+            self.buy_limitorder_input.setEnabled(True)
+            self.buy_trader_dif.setEnabled(True)
+            self.sell_marketsell.setEnabled(True)
+            self.sell_bestoffer.setEnabled(True)
+            self.key_api.setEnabled(True)
+            self.key_secret.setEnabled(True)
+            self.max_btc.setEnabled(True)
 
         #print(self.pushButton.text())
 class Ui_Dialog(object):
