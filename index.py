@@ -320,7 +320,6 @@ class Ui_MainWindow(object):
                 sell_choice = 1
             elif self.sell_bestoffer.isChecked() == True:
                 sell_choice = 2
-            print(sell_choice)
 
 
 
@@ -353,7 +352,34 @@ class Ui_MainWindow(object):
                 run_error=1
                 run_error_msg="Please select trader(s)"
             else:
-                pass
+                if (buy_choice!=1 and buy_choice!=2 and buy_choice!=3):
+                    run_error=1
+                    run_error_msg="Please Choose Your Buy Method"
+                else:
+                    if (buy_choice==3 and (float(buy_choice_limit_order)<80 or float(buy_choice_limit_order)>101)):
+                        run_error=1
+                        run_error_msg="Please enter the correct value for the limit order"
+                    else:
+                        if (float(buy_diff)<0 or float(buy_diff)>5):
+                            run_error=1
+                            run_error_msg="Trader Difference must be between 0 and 5"
+                        else:
+                            if (sell_choice!=1 and sell_choice!=2):
+                                run_error=1
+                                run_error_msg="Please Choose Your Sell Method"
+                            else:
+                                if (self.key_api.text()=="" and self.key_secret.text()==""):
+                                    run_error=1
+                                    run_error_msg="Please Fill in Your Key Api and Key Secret"
+                                else:
+                                    if (float(self.max_btc.text())<0.01):
+                                        run_error=1
+                                        run_error_msg="Max.Allocated BTC must be greater than 0.01 BTC"
+                                    else:
+                                        pass
+                                        
+                    
+                
             
             if run_error==1:
                msgBox = QMessageBox()
