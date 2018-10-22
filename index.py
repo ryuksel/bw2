@@ -23,6 +23,7 @@ import pandas as pd
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
+from binance.client import Client
 #from main import Ui_MainWindow
 
 
@@ -221,7 +222,8 @@ class Ui_MainWindow(object):
         self.texti_problem.setText(
             _translate("MainWindow", "<html><head/><body><p>2018 © BinanceWinner.com</p></body></html>"))
         self.texti_v1.setText(_translate("MainWindow", "v" + str(bw_version)))
-
+        self.key_api.setText(_translate("MainWindow", "QV3mwOW69rvQu3E81v0mlJCmmgS63h55HEvKowR1n0yIoXHYXPDl4ppIXUVBADDe"))
+        self.key_secret.setText(_translate("MainWindow", "RtVFEjyGBFYKwyLSVFd7prYrUAAdzPyFDbby9Y3rFayrij5troFAhNek6Eeqc4BQ"))
         ###Start Main codes
 
         print(glo_info)
@@ -267,10 +269,6 @@ class Ui_MainWindow(object):
         
     def run_button(self):
         if self.pushButton.text()=="Run":
-            self.pushButton.setText("Stop")
-            self.pushButton.setStyleSheet("background-color:rgb(252, 76, 76);\n" "color: #FFF;")
-            print("Start")
-
 
             #######Trader selections
             global active_trader_list
@@ -325,29 +323,16 @@ class Ui_MainWindow(object):
 
 
 
-            self.trader_box1.setEnabled(False)
-            self.trader_box2.setEnabled(False)
-            self.trader_box3.setEnabled(False)
-            self.trader_box4.setEnabled(False)
-            self.trader_box5.setEnabled(False)
-            self.trader_box6.setEnabled(False)
-            self.trader_box7.setEnabled(False)
-            self.trader_box8.setEnabled(False)
-            self.trader_box9.setEnabled(False)
-            self.trader_box10.setEnabled(False)
-            self.buy_marketbuy.setEnabled(False)
-            self.buy_bestoffer.setEnabled(False)
-            self.buy_limitorder.setEnabled(False)
-            self.buy_limitorder_input.setEnabled(False)
-            self.buy_trader_dif.setEnabled(False)
-            self.sell_marketsell.setEnabled(False)
-            self.sell_bestoffer.setEnabled(False)
-            self.key_api.setEnabled(False)
-            self.key_secret.setEnabled(False)
-            self.max_btc.setEnabled(False)
+           
 
             ##### RUN checks
+            
+            val_key_api=self.key_api.text().replace(",",".")
+            val_key_secret=self.key_secret.text().replace(",",".")
+            val_max_btc=self.max_btc.text().replace(",",".")
+            
             run_error=0
+            try_binance=0
             if len(active_trader_list)==0:
                 run_error=1
                 run_error_msg="Please select trader(s)"
@@ -368,27 +353,80 @@ class Ui_MainWindow(object):
                                 run_error=1
                                 run_error_msg="Please Choose Your Sell Method"
                             else:
-                                if (self.key_api.text()=="" and self.key_secret.text()==""):
+                                if (val_key_api=="" or val_key_secret==""):
                                     run_error=1
                                     run_error_msg="Please Fill in Your Key Api and Key Secret"
                                 else:
-                                    if (float(self.max_btc.text())<0.01):
+                                    
+                                    if (float(val_max_btc)<0.01):
                                         run_error=1
                                         run_error_msg="Max.Allocated BTC must be greater than 0.01 BTC"
                                     else:
-                                        pass
+                                        if (run_error==0):
+                                            try_binance=1
+                                        else:
+                                            run_error=1
+                                            run_error_msg="Please fill in all fields correctly"
                                         
+            binance_error=0
+            binance_error_msg=""
+            if try_binance==1:
+                ##Binance Login try
+                try: 
+                    client = Client(self.key_api.text(), self.key_secret.text())                    
+                    acc_info = client.get_account()
+                    if acc_info["canTrade"]==True:
+                        binance_error=0
+                except:
+                    binance_error=1
+                    binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
                     
-                
-            
+                if binance_error==0:
+                    balance = client.get_asset_balance(asset='BTC')
+                    if (float(balance["free"])<0.01):
+                        binance_error=1
+                        binance_error_msg="Your Free BTC must be more than 0.01 BTC"
+                    else:
+                        binance_error:0
+                     
             if run_error==1:
                msgBox = QMessageBox()
                msgBox.setText(run_error_msg)    
                msgBox.setStandardButtons(QMessageBox.Ok)
                msgBox.setDefaultButton(QMessageBox.Ok)
                ret = msgBox.exec_()
-            
-                
+            elif binance_error==1:
+               msgBox = QMessageBox()
+               msgBox.setText(binance_error_msg)    
+               msgBox.setStandardButtons(QMessageBox.Ok)
+               msgBox.setDefaultButton(QMessageBox.Ok)
+               ret = msgBox.exec_()
+            else:
+                 ###Complete RUN!####
+                 self.pushButton.setText("Stop")
+                 self.pushButton.setStyleSheet("background-color:rgb(252, 76, 76);\n" "color: #FFF;")
+                 print("Start")
+                 self.trader_box1.setEnabled(False)
+                 self.trader_box2.setEnabled(False)
+                 self.trader_box3.setEnabled(False)
+                 self.trader_box4.setEnabled(False)
+                 self.trader_box5.setEnabled(False)
+                 self.trader_box6.setEnabled(False)
+                 self.trader_box7.setEnabled(False)
+                 self.trader_box8.setEnabled(False)
+                 self.trader_box9.setEnabled(False)
+                 self.trader_box10.setEnabled(False)
+                 self.buy_marketbuy.setEnabled(False)
+                 self.buy_bestoffer.setEnabled(False)
+                 self.buy_limitorder.setEnabled(False)
+                 self.buy_limitorder_input.setEnabled(False)
+                 self.buy_trader_dif.setEnabled(False)
+                 self.sell_marketsell.setEnabled(False)
+                 self.sell_bestoffer.setEnabled(False)
+                 self.key_api.setEnabled(False)
+                 self.key_secret.setEnabled(False)
+                 self.max_btc.setEnabled(False)
+             
         
 
 
