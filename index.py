@@ -22,10 +22,13 @@ import requests
 import pandas as pd
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 #from main import Ui_MainWindow
 
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        object.__init__(self)   
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(688, 304)
@@ -291,7 +294,8 @@ class Ui_MainWindow(object):
                 active_trader_list.add(self.trader_box9.text())
             if self.trader_box10.isChecked()== True:
                 active_trader_list.add(self.trader_box10.text())
-            print(active_trader_list)
+            
+            
             
 
 
@@ -343,7 +347,23 @@ class Ui_MainWindow(object):
             self.key_secret.setEnabled(False)
             self.max_btc.setEnabled(False)
 
-
+            ##### RUN checks
+            run_error=0
+            if len(active_trader_list)==0:
+                run_error=1
+                run_error_msg="Please select trader(s)"
+            else:
+                pass
+            
+            if run_error==1:
+               msgBox = QMessageBox()
+               msgBox.setText(run_error_msg)    
+               msgBox.setStandardButtons(QMessageBox.Ok)
+               msgBox.setDefaultButton(QMessageBox.Ok)
+               ret = msgBox.exec_()
+            
+                
+        
 
 
         else:
@@ -377,7 +397,8 @@ class Ui_MainWindow(object):
             self.key_secret.setEnabled(True)
             self.max_btc.setEnabled(True)
 
-        #print(self.pushButton.text())
+  
+        
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
