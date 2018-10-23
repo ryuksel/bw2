@@ -24,6 +24,7 @@ from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 from binance.client import Client
+import sqlite3
 #from main import Ui_MainWindow
 
 
@@ -185,6 +186,12 @@ class Ui_MainWindow(object):
         self.max_btc = QtWidgets.QLineEdit(self.formLayoutWidget_2)
         self.max_btc.setObjectName("max_btc")
         self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.max_btc)
+        
+        self.save_changes = QtWidgets.QCheckBox(self.groupBox_4)
+        self.save_changes.setGeometry(QtCore.QRect(15, 102, 95, 31))
+        self.save_changes.setObjectName("save_changes")
+        
+        
         self.pushButton = QtWidgets.QPushButton(self.groupBox_4)
         self.pushButton.setGeometry(QtCore.QRect(110, 132, 75, 31))
         self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
@@ -233,6 +240,7 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "Binance Secret Key: "))
         self.label_5.setText(_translate("MainWindow", "Max.Allocated  BTC :"))
         self.max_btc.setText(_translate("MainWindow", "0.5"))
+        self.save_changes.setText(_translate("MainWindow","Save Changes"))
         self.pushButton.setText(_translate("MainWindow", "Run"))
         self.pushButton.clicked.connect(self.run_button)
         self.groupBox_5.setTitle(_translate("MainWindow", "Status"))
@@ -243,7 +251,7 @@ class Ui_MainWindow(object):
         self.key_secret.setText(_translate("MainWindow", "RtVFEjyGBFYKwyLSVFd7prYrUAAdzPyFDbby9Y3rFayrij5troFAhNek6Eeqc4BQ"))
         ###Start Main codes
 
-        print(glo_info)
+        
         a=1
         for b in glo_info["trader_name"]:
             if a==1:
@@ -338,8 +346,15 @@ class Ui_MainWindow(object):
 
 
 
-
-
+            ####Save changes
+            if self.save_changes.isChecked()== True:
+                deneme='a2'
+                print("deniyoruz")
+                con = sqlite3.connect("bw_db.db")
+                cursor = con.cursor()
+                cursor.execute("UPDATE save_settings set trader_selector=(?)",[active_trader_list])
+                con.commit()
+                con.close()
            
 
             ##### RUN checks
