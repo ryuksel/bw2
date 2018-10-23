@@ -106,7 +106,7 @@ class Ui_MainWindow(object):
         self.groupBox_2.setGeometry(QtCore.QRect(160, 10, 211, 161))
         self.groupBox_2.setObjectName("groupBox_2")
         self.buy_limitorder_input = QtWidgets.QLineEdit(self.groupBox_2)
-        self.buy_limitorder_input.setGeometry(QtCore.QRect(83, 88, 21, 20))
+        self.buy_limitorder_input.setGeometry(QtCore.QRect(83, 90, 28, 17))
         self.buy_limitorder_input.setObjectName("buy_limitorder_input")
         self.buy_limitorder = QtWidgets.QRadioButton(self.groupBox_2)
         self.buy_limitorder.setGeometry(QtCore.QRect(10, 90, 211, 17))
@@ -124,10 +124,10 @@ class Ui_MainWindow(object):
         self.label_2.setGeometry(QtCore.QRect(10, 130, 91, 16))
         self.label_2.setObjectName("label_2")
         self.buy_trader_dif = QtWidgets.QLineEdit(self.groupBox_2)
-        self.buy_trader_dif.setGeometry(QtCore.QRect(100, 130, 16, 20))
+        self.buy_trader_dif.setGeometry(QtCore.QRect(100, 130, 22, 16))
         self.buy_trader_dif.setObjectName("buy_trader_dif")
         self.label_6 = QtWidgets.QLabel(self.groupBox_2)
-        self.label_6.setGeometry(QtCore.QRect(120, 132, 47, 13))
+        self.label_6.setGeometry(QtCore.QRect(124, 132, 47, 13))
         self.label_6.setObjectName("label_6")
         self.buy_limitorder.raise_()
         self.buy_limitorder_input.raise_()
@@ -153,10 +153,10 @@ class Ui_MainWindow(object):
         self.label_2x.setGeometry(QtCore.QRect(10, 70, 91, 16))
         self.label_2x.setObjectName("label_2x")
         self.sell_stoploss = QtWidgets.QLineEdit(self.groupBox_3)
-        self.sell_stoploss.setGeometry(QtCore.QRect(80, 70, 18, 20))
+        self.sell_stoploss.setGeometry(QtCore.QRect(80, 70, 28, 16))
         self.sell_stoploss.setObjectName("sell_stoploss")
         self.label_6x = QtWidgets.QLabel(self.groupBox_3)
-        self.label_6x.setGeometry(QtCore.QRect(100, 71, 47, 13))
+        self.label_6x.setGeometry(QtCore.QRect(110, 72, 47, 13))
         self.label_6x.setObjectName("label_6x")
 
         self.groupBox_4 = QtWidgets.QGroupBox(self.centralwidget)
@@ -220,13 +220,12 @@ class Ui_MainWindow(object):
         self.groupBox.setTitle(_translate("MainWindow", "1. Trader Selection"))
         #self.trader_box1.setText(_translate("MainWindow", "CheckBox"))
         self.groupBox_2.setTitle(_translate("MainWindow", "2. Buy Settings"))
-        self.buy_limitorder_input.setText(_translate("MainWindow", "99"))
-        self.buy_limitorder.setText(_translate("MainWindow", "Limit Order        /100 (Trader Price)"))
+        self.buy_limitorder.setText(_translate("MainWindow", "Limit Order          % (Trader Price)"))
         self.buy_bestoffer.setText(_translate("MainWindow", "Best Offer for Buy"))
         self.buy_marketbuy.setText(_translate("MainWindow", "Markey Buy"))
         self.label.setText(_translate("MainWindow", "-----------------------------------------------"))
         self.label_2.setText(_translate("MainWindow", "Trader Difference:"))
-        self.buy_trader_dif.setText(_translate("MainWindow", "1"))        
+
         self.label_6.setText(_translate("MainWindow", "%"))
         self.groupBox_3.setTitle(_translate("MainWindow", "3. Sell Settings"))
         self.sell_bestoffer.setText(_translate("MainWindow", "Best Offer for Sell"))
@@ -234,12 +233,11 @@ class Ui_MainWindow(object):
         self.label_sellwq.setText(_translate("MainWindow", "-----------------------------------------------"))
         self.label_2x.setText(_translate("MainWindow", "Stoploss Limit:"))
         self.label_6x.setText(_translate("MainWindow", "%"))
-        self.sell_stoploss.setText(_translate("MainWindow", "10"))        
+
         self.groupBox_4.setTitle(_translate("MainWindow", "4. Genereal Settings and Run"))
         self.label_3.setText(_translate("MainWindow", "Binance Api Key:"))
         self.label_4.setText(_translate("MainWindow", "Binance Secret Key: "))
         self.label_5.setText(_translate("MainWindow", "Max.Allocated  BTC :"))
-        self.max_btc.setText(_translate("MainWindow", "0.5"))
         self.save_changes.setText(_translate("MainWindow","Save Changes"))
         self.pushButton.setText(_translate("MainWindow", "Run"))
         self.pushButton.clicked.connect(self.run_button)
@@ -247,43 +245,126 @@ class Ui_MainWindow(object):
         self.texti_problem.setText(
             _translate("MainWindow", "<html><head/><body><p>2018 © BinanceWinner.com</p></body></html>"))
         self.texti_v1.setText(_translate("MainWindow", "v" + str(bw_version)))
-        self.key_api.setText(_translate("MainWindow", "QV3mwOW69rvQu3E81v0mlJCmmgS63h55HEvKowR1n0yIoXHYXPDl4ppIXUVBADDe"))
-        self.key_secret.setText(_translate("MainWindow", "RtVFEjyGBFYKwyLSVFd7prYrUAAdzPyFDbby9Y3rFayrij5troFAhNek6Eeqc4BQ"))
-        ###Start Main codes
 
-        
+        ###Load Save Changes
+        con = sqlite3.connect("bw_db.db")
+        cursor = con.cursor()
+        cursor.execute("Select * From save_settings")
+        save_data = cursor.fetchall()
+        load_trader=save_data[0][0]
+        load_buy_method=save_data[0][1]
+        load_buy_diff = save_data[0][2]
+        load_buy_limit_field = save_data[0][3]
+        load_sell_method = save_data[0][4]
+        load_sell_stoploss = save_data[0][5]
+        load_api_key= save_data[0][6]
+        load_secret_key = save_data[0][7]
+        load_max_btc = save_data[0][8]
+        con.close()
+
+        if load_trader is not None:
+            load_trader = load_trader.replace("{","")
+            load_trader = load_trader.replace("}", "")
+            load_trader = load_trader.replace("'", "")
+            trader_split = load_trader.split(",")
+        else:
+            trader_split = list()
+        if load_buy_method is not None:
+            if int(load_buy_method)==1:
+                self.buy_marketbuy.setChecked(True)
+            elif int(load_buy_method)==2:
+                self.buy_bestoffer.setChecked(True)
+            else:
+                self.buy_limitorder.setChecked(True)
+        else:
+            self.buy_marketbuy.setChecked(True)
+        if load_buy_limit_field is not None:
+            self.buy_limitorder_input.setText(_translate("MainWindow", str(load_buy_limit_field)))
+        else:
+            self.buy_limitorder_input.setText(_translate("MainWindow", "99"))
+        if load_buy_diff is not None:
+            self.buy_trader_dif.setText(_translate("MainWindow", str(load_buy_diff)))
+        else:
+            self.buy_trader_dif.setText(_translate("MainWindow", "1.0"))
+        if load_sell_method is not None:
+            if int(load_sell_method)==1:
+                self.sell_marketsell.setChecked(True)
+            else:
+                self.sell_bestoffer.setChecked(True)
+        else:
+            self.sell_marketsell.setChecked(True)
+        if load_sell_stoploss is not None:
+            self.sell_stoploss.setText(_translate("MainWindow", str(load_sell_stoploss)))
+        else:
+            self.sell_stoploss.setText(_translate("MainWindow", "10"))
+        if load_api_key is not None:
+            self.key_api.setText(_translate("MainWindow", str(load_api_key)))
+        else:
+            self.key_api.setText(_translate("MainWindow", ""))
+        if load_secret_key is not None:
+            self.key_secret.setText(_translate("MainWindow", str(load_secret_key)))
+        else:
+            self.key_secret.setText(_translate("MainWindow", ""))
+        if load_max_btc is not None:
+            self.max_btc.setText(_translate("MainWindow", str(load_max_btc)))
+        else:
+            self.max_btc.setText(_translate("MainWindow", "0.5"))
+
+
+
+        ###Start Main codes
         a=1
         for b in glo_info["trader_name"]:
             if a==1:
                 self.trader_box1.setText(_translate("MainWindow", str(b)))
                 self.trader_box1.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box1.setChecked(True)
             elif a==2:
                 self.trader_box2.setText(_translate("MainWindow", str(b)))
                 self.trader_box2.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box2.setChecked(True)
             elif a==3:
                 self.trader_box3.setText(_translate("MainWindow", str(b)))    
                 self.trader_box3.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box3.setChecked(True)
             elif a == 4:
                 self.trader_box4.setText(_translate("MainWindow", str(b)))
                 self.trader_box4.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box4.setChecked(True)
             elif a==5:
                 self.trader_box5.setText(_translate("MainWindow", str(b)))
                 self.trader_box5.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box5.setChecked(True)
             elif a == 6:
                 self.trader_box6.setText(_translate("MainWindow", str(b)))
                 self.trader_box6.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box6.setChecked(True)
             elif a == 7:
                 self.trader_box7.setText(_translate("MainWindow", str(b)))
                 self.trader_box7.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box7.setChecked(True)
             elif a == 8:
                 self.trader_box8.setText(_translate("MainWindow", str(b)))
                 self.trader_box8.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box8.setChecked(True)
             elif a == 9:
                 self.trader_box9.setText(_translate("MainWindow", str(b)))
                 self.trader_box9.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box9.setChecked(True)
             elif a == 10:
                 self.trader_box10.setText(_translate("MainWindow", str(b)))
                 self.trader_box10.show()
+                if any(b in s for s in trader_split):
+                    self.trader_box10.setChecked(True)
             a += 1
             #self.trader_box10.stateChanged.connect(self.clickBox)
 
@@ -329,11 +410,11 @@ class Ui_MainWindow(object):
             elif self.buy_bestoffer.isChecked()== True:
                 buy_choice = 2 
             elif self.buy_limitorder.isChecked()== True:
-                buy_choice = 3 
-                global buy_choice_limit_order
-                buy_choice_limit_order = self.buy_limitorder_input.text()
+                buy_choice = 3
             global buy_diff
             buy_diff = self.buy_trader_dif.text()
+            global buy_choice_limit_order
+            buy_choice_limit_order = self.buy_limitorder_input.text()
 
 
 
@@ -348,11 +429,10 @@ class Ui_MainWindow(object):
 
             ####Save changes
             if self.save_changes.isChecked()== True:
-                deneme='a2'
-                print("deniyoruz")
+                a_t_list=repr(active_trader_list)
                 con = sqlite3.connect("bw_db.db")
                 cursor = con.cursor()
-                cursor.execute("UPDATE save_settings set trader_selector=(?)",[active_trader_list])
+                cursor.execute("UPDATE save_settings set trader_selector=(?) , buy_method = (?) , buy_diff = (?) , buy_limit_field = (?) , sell_method = (?) , sell_stoploss = (?) , api_key = (?) , secret_key = (?) , max_btc = (?)",[a_t_list, buy_choice, buy_diff, buy_choice_limit_order, sell_choice, self.sell_stoploss.text(), self.key_api.text(), self.key_secret.text(), self.max_btc.text()])
                 con.commit()
                 con.close()
            
