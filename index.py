@@ -140,11 +140,24 @@ class Ui_MainWindow(object):
         self.groupBox_3.setGeometry(QtCore.QRect(160, 180, 211, 91))
         self.groupBox_3.setObjectName("groupBox_3")
         self.sell_bestoffer = QtWidgets.QRadioButton(self.groupBox_3)
-        self.sell_bestoffer.setGeometry(QtCore.QRect(10, 60, 111, 17))
+        self.sell_bestoffer.setGeometry(QtCore.QRect(10, 40, 111, 17))
         self.sell_bestoffer.setObjectName("sell_bestoffer")
         self.sell_marketsell = QtWidgets.QRadioButton(self.groupBox_3)
-        self.sell_marketsell.setGeometry(QtCore.QRect(10, 30, 161, 17))
+        self.sell_marketsell.setGeometry(QtCore.QRect(10, 20, 161, 17))
         self.sell_marketsell.setObjectName("sell_marketsell")
+        
+        self.label_sellwq = QtWidgets.QLabel(self.groupBox_3)
+        self.label_sellwq.setGeometry(QtCore.QRect(10, 55, 191, 16))
+        self.label_2x = QtWidgets.QLabel(self.groupBox_3)
+        self.label_2x.setGeometry(QtCore.QRect(10, 70, 91, 16))
+        self.label_2x.setObjectName("label_2x")
+        self.sell_stoploss = QtWidgets.QLineEdit(self.groupBox_3)
+        self.sell_stoploss.setGeometry(QtCore.QRect(80, 70, 18, 20))
+        self.sell_stoploss.setObjectName("sell_stoploss")
+        self.label_6x = QtWidgets.QLabel(self.groupBox_3)
+        self.label_6x.setGeometry(QtCore.QRect(100, 71, 47, 13))
+        self.label_6x.setObjectName("label_6x")
+
         self.groupBox_4 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_4.setGeometry(QtCore.QRect(380, 10, 291, 171))
         self.groupBox_4.setObjectName("groupBox_4")
@@ -206,11 +219,15 @@ class Ui_MainWindow(object):
         self.buy_marketbuy.setText(_translate("MainWindow", "Markey Buy"))
         self.label.setText(_translate("MainWindow", "-----------------------------------------------"))
         self.label_2.setText(_translate("MainWindow", "Trader Difference:"))
-        self.buy_trader_dif.setText(_translate("MainWindow", "1"))
+        self.buy_trader_dif.setText(_translate("MainWindow", "1"))        
         self.label_6.setText(_translate("MainWindow", "%"))
         self.groupBox_3.setTitle(_translate("MainWindow", "3. Sell Settings"))
         self.sell_bestoffer.setText(_translate("MainWindow", "Best Offer for Sell"))
         self.sell_marketsell.setText(_translate("MainWindow", "Market Sell"))
+        self.label_sellwq.setText(_translate("MainWindow", "-----------------------------------------------"))
+        self.label_2x.setText(_translate("MainWindow", "Stoploss Limit:"))
+        self.label_6x.setText(_translate("MainWindow", "%"))
+        self.sell_stoploss.setText(_translate("MainWindow", "10"))        
         self.groupBox_4.setTitle(_translate("MainWindow", "4. Genereal Settings and Run"))
         self.label_3.setText(_translate("MainWindow", "Binance Api Key:"))
         self.label_4.setText(_translate("MainWindow", "Binance Secret Key: "))
@@ -330,6 +347,7 @@ class Ui_MainWindow(object):
             val_key_api=self.key_api.text().replace(",",".")
             val_key_secret=self.key_secret.text().replace(",",".")
             val_max_btc=self.max_btc.text().replace(",",".")
+            sell_stoploss=self.sell_stoploss.text().replace(",",".")
             
             run_error=0
             try_binance=0
@@ -362,11 +380,15 @@ class Ui_MainWindow(object):
                                         run_error=1
                                         run_error_msg="Max.Allocated BTC must be greater than 0.01 BTC"
                                     else:
-                                        if (run_error==0):
-                                            try_binance=1
-                                        else:
+                                        if float(sell_stoploss)<1:
                                             run_error=1
-                                            run_error_msg="Please fill in all fields correctly"
+                                            run_error_msg="Stoploss must be more than 1 %"
+                                        else:
+                                            if (run_error==0):
+                                                try_binance=1
+                                            else:
+                                                run_error=1
+                                                run_error_msg="Please fill in all fields correctly"
                                         
             binance_error=0
             binance_error_msg=""
