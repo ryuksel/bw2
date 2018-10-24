@@ -14,9 +14,8 @@ buy_choice= int
 buy_choice_limit_order= float
 buy_diff = float
 sell_choice= int
-fast_run = 1
 win32_dl = 0
-
+min_btc = float(0.01)
 
 import sys
 import requests
@@ -382,8 +381,10 @@ class Ui_MainWindow(object):
         #self.checks_add =  QtWidgets.QCheckBox(self.verticalLayoutWidget)
         #self.checks_add.setObjectName("checks_add")
         #self.checks_add = self.checks_add+self.verticalLayout_2.addWidget(self.checks_add)
-        
+        self.timer = QtCore.QTimer(self.window)
+        self.timer.timeout.connect(self.showTime)        
     def run_button(self):
+        
         if self.pushButton.text()=="Run":
 
             #######Trader selections
@@ -499,12 +500,12 @@ class Ui_MainWindow(object):
             binance_error=0
             binance_error_msg=""
             if try_binance==1:
-                print("deniyoruz")
+                
                 ##Binance Login try
                 try: 
                     client = Client(self.key_api.text(), self.key_secret.text())                    
 
-                    if win32_dl==1:
+                    if win32_dl==5:
                         gt = client.get_server_time()
                         aa = str(gt)
                         bb = aa.replace("{'serverTime': ","")
@@ -572,9 +573,8 @@ class Ui_MainWindow(object):
                  self.max_btc.setEnabled(False)
                  
                  
-                 timer = QtCore.QTimer(self.window)
-                 timer.timeout.connect(self.showTime)
-                 timer.start(5000)
+
+                 self.timer.start(5000)
 
                  self.showTime()
 
@@ -582,7 +582,9 @@ class Ui_MainWindow(object):
 
 
         else:
+            
             self.timer.stop()
+            
 
             self.pushButton.setText("Run")
             self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
@@ -617,6 +619,28 @@ class Ui_MainWindow(object):
             #timer.deleteLater()
 
     def showTime(self):
+        ### Decide to process ( buy or sell )
+        con = sqlite3.connect("bw_db.db")
+        order_data = pd.read_sql_query("Select * From orders WHERE status ='1'", con)
+        num_row = len(order_data)
+        total_spent_btc = 0
+        process_buy=0
+        process_sell=0
+        
+        if num_row>0:
+            process_sell=1
+            order_data['spents'] = order_data.buy_amount * order_data.buy_my_price
+            for i in order_data['spents']:
+                total_spent_btc += i
+        disposable_btc = float(self.max_btc.text()) - float(total_spent_btc)
+        if disposable_btc>min_btc:
+            process_buy =1
+        
+        print(process_buy,process_sell)
+        
+        
+        
+        self.status_area.append("Working")
 
         print(active_trader_list)
         
@@ -686,7 +710,11 @@ class Ui_Dialog(object):
         in_passwd=self.input_password.text()
         
         global bw_version
-        v_check=requests.get("https://www.binancewinner.com/engine/trade_version.txt")
+        try:
+            v_check=requests.get("https://www.binancewinner.com/engine/trade_version.txt")
+        except:
+            self.Login_error_msg="Internet Connection Error"                            
+            self.text_login_error.setText(self.Login_error_msg)
         if (v_check.text!=str(bw_version)):
            self.Login_error = True
            self.Login_error_msg = "Please Update Program"
