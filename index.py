@@ -15,7 +15,7 @@ buy_choice_limit_order= float
 buy_diff = float
 sell_choice= int
 fast_run = 1
- 
+win32_dl = 0
 
 
 import sys
@@ -29,7 +29,11 @@ from PyQt5.QtCore import QTime, QTimer
 from binance.client import Client
 import sqlite3
 import time
-import win32api
+try:
+    import win32api
+    win32_dl=1
+except:
+    win32_dl=0
 #from main import Ui_MainWindow
 
 
@@ -499,16 +503,18 @@ class Ui_MainWindow(object):
                 ##Binance Login try
                 try: 
                     client = Client(self.key_api.text(), self.key_secret.text())                    
-                    gt = client.get_server_time()
-                    aa = str(gt)
-                    bb = aa.replace("{'serverTime': ","")
-                    aa = bb.replace("}","")
-                    gg=int(aa)
-                    ff=gg-10799260
-                    uu=ff/1000
-                    yy=int(uu)
-                    tt=time.localtime(yy)
-                    win32api.SetSystemTime(tt[0],tt[1],0,tt[2],tt[3],tt[4],tt[5],0)
+
+                    if win32_dl==1:
+                        gt = client.get_server_time()
+                        aa = str(gt)
+                        bb = aa.replace("{'serverTime': ","")
+                        aa = bb.replace("}","")
+                        gg=int(aa)
+                        ff=gg-10799260
+                        uu=ff/1000
+                        yy=int(uu)
+                        tt=time.localtime(yy)
+                        win32api.SetSystemTime(tt[0],tt[1],0,tt[2],tt[3],tt[4],tt[5],0)
                     acc_info = client.get_account()
                     
                     
@@ -568,14 +574,16 @@ class Ui_MainWindow(object):
                  
                  timer = QtCore.QTimer(self.window)
                  timer.timeout.connect(self.showTime)
-                 timer.start(1000)
+                 timer.start(5000)
 
                  self.showTime()
 
-              
+
 
 
         else:
+            self.timer.stop()
+
             self.pushButton.setText("Run")
             self.pushButton.setStyleSheet("background-color:rgb(85, 170, 127);\n" "color: #FFF;")
             print("Stop")
@@ -606,9 +614,11 @@ class Ui_MainWindow(object):
             self.key_secret.setEnabled(True)
             self.max_btc.setEnabled(True)
 
-    def showTime(self):  
-        time = QTime.currentTime()        
-        print(time)
+            #timer.deleteLater()
+
+    def showTime(self):
+
+        print(active_trader_list)
         
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
