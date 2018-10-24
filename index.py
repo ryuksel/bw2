@@ -14,24 +14,30 @@ buy_choice= int
 buy_choice_limit_order= float
 buy_diff = float
 sell_choice= int
-
+fast_run = 1
+ 
 
 
 import sys
 import requests
 import pandas as pd
+#import time
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QTime, QTimer
 from binance.client import Client
 import sqlite3
+import time
+import win32api
 #from main import Ui_MainWindow
 
 
 class Ui_MainWindow(object):
     def __init__(self):
-        object.__init__(self)   
+        object.__init__(self)
     def setupUi(self, MainWindow):
+        self.window = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(688, 304)
         icon = QtGui.QIcon()
@@ -210,7 +216,7 @@ class Ui_MainWindow(object):
         self.texti_v1.setGeometry(QtCore.QRect(650, 280, 47, 13))
         self.texti_v1.setObjectName("texti_v1")
         MainWindow.setCentralWidget(self.centralwidget)
-
+        
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -485,18 +491,33 @@ class Ui_MainWindow(object):
                                                 run_error=1
                                                 run_error_msg="Please fill in all fields correctly"
                                         
+            
             binance_error=0
             binance_error_msg=""
             if try_binance==1:
+                print("deniyoruz")
                 ##Binance Login try
                 try: 
                     client = Client(self.key_api.text(), self.key_secret.text())                    
+                    gt = client.get_server_time()
+                    aa = str(gt)
+                    bb = aa.replace("{'serverTime': ","")
+                    aa = bb.replace("}","")
+                    gg=int(aa)
+                    ff=gg-10799260
+                    uu=ff/1000
+                    yy=int(uu)
+                    tt=time.localtime(yy)
+                    win32api.SetSystemTime(tt[0],tt[1],0,tt[2],tt[3],tt[4],tt[5],0)
                     acc_info = client.get_account()
+                    
+                    
                     if acc_info["canTrade"]==True:
                         binance_error=0
                 except:
                     binance_error=1
                     binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
+                    
                     
                 if binance_error==0:
                     balance = client.get_asset_balance(asset='BTC')
@@ -543,8 +564,15 @@ class Ui_MainWindow(object):
                  self.key_api.setEnabled(False)
                  self.key_secret.setEnabled(False)
                  self.max_btc.setEnabled(False)
-             
-        
+                 
+                 
+                 timer = QtCore.QTimer(self.window)
+                 timer.timeout.connect(self.showTime)
+                 timer.start(1000)
+
+                 self.showTime()
+
+              
 
 
         else:
@@ -578,7 +606,9 @@ class Ui_MainWindow(object):
             self.key_secret.setEnabled(True)
             self.max_btc.setEnabled(True)
 
-  
+    def showTime(self):  
+        time = QTime.currentTime()        
+        print(time)
         
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -669,8 +699,10 @@ class Ui_Dialog(object):
                             self.Login_error_msg="Fill in all fields"
                         elif (lgn_err_code==1):
                             self.Login_error_msg="Invalid e-mail and password"
-                        elif (lgn_err_code==1):
+                        elif (lgn_err_code==2):
                             self.Login_error_msg="Please Upgrade Plus member"
+                        elif (lgn_err_code==3):
+                            self.Login_error_msg="You haven't trader"                            
                         self.text_login_error.setText(self.Login_error_msg)
                     else:
                         print("Success")
@@ -690,7 +722,7 @@ class Ui_Dialog(object):
                     glo_password=in_passwd
                     glo_info=login_json
                     Dialog.hide()
-
+                    
                     self.main_enter =  QtWidgets.QMainWindow()
 
                     self.ui = Ui_MainWindow()
