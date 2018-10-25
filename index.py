@@ -503,14 +503,14 @@ class Ui_MainWindow(object):
                 
                 ##Binance Login try
                 try: 
-                    client = Client(self.key_api.text(), self.key_secret.text())                    
-                    acc_info = client.get_account()
+                    self.client = Client(self.key_api.text(), self.key_secret.text())                    
+                    acc_info = self.client.get_account()
                     if acc_info["canTrade"]==True:
                         binance_error=0
                 except:
                     if win32_dl==1:
                         try:
-                            gt = client.get_server_time()
+                            gt = self.client.get_server_time()
                             aa = str(gt)
                             bb = aa.replace("{'serverTime': ","")
                             aa = bb.replace("}","")
@@ -527,14 +527,6 @@ class Ui_MainWindow(object):
                         binance_error=1
                         binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
                     
-                    
-                if binance_error==0:
-                    balance = client.get_asset_balance(asset='BTC')
-                    if (float(balance["free"])<0.01):
-                        binance_error=1
-                        binance_error_msg="Your Free BTC must be more than 0.01 BTC"
-                    else:
-                        binance_error:0
                      
             if run_error==1:
                msgBox = QMessageBox()
@@ -628,6 +620,7 @@ class Ui_MainWindow(object):
         total_spent_btc = 0
         process_buy=0
         process_sell=0
+        real_disposable_btc = 0
         
         if num_row>0:
             process_sell=1
@@ -636,10 +629,20 @@ class Ui_MainWindow(object):
                 total_spent_btc += i
         disposable_btc = float(self.max_btc.text()) - float(total_spent_btc)
         if disposable_btc>min_btc:
-            process_buy =1
+            balance = self.client.get_asset_balance(asset='BTC')
+            if (float(balance["free"])>min_btc):
+                process_buy = 1
+                if (float(balance["free"])>=disposable_btc):
+                    real_disposable_btc = disposable_btc
+                else:
+                    real_disposable_btc = balance["free"]
+                    
+                
+                
         
         print(process_buy,process_sell)
-        
+        print(real_disposable_btc)
+        print(total_spent_btc)
         
         
         self.status_area.append("Working")
