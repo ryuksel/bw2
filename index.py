@@ -15,7 +15,7 @@ buy_choice_limit_order= float
 buy_diff = float
 sell_choice= int
 win32_dl = 0
-min_btc = float(0.01)
+min_btc = float(0.002)
 
 import sys
 import requests
@@ -24,7 +24,7 @@ import pandas as pd
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import QTime, QTimer
+#from PyQt5.QtCore import QTime, QTimer
 from binance.client import Client
 import sqlite3
 import time
@@ -504,26 +504,28 @@ class Ui_MainWindow(object):
                 ##Binance Login try
                 try: 
                     client = Client(self.key_api.text(), self.key_secret.text())                    
-
-                    if win32_dl==5:
-                        gt = client.get_server_time()
-                        aa = str(gt)
-                        bb = aa.replace("{'serverTime': ","")
-                        aa = bb.replace("}","")
-                        gg=int(aa)
-                        ff=gg-10799260
-                        uu=ff/1000
-                        yy=int(uu)
-                        tt=time.localtime(yy)
-                        win32api.SetSystemTime(tt[0],tt[1],0,tt[2],tt[3],tt[4],tt[5],0)
                     acc_info = client.get_account()
-                    
-                    
                     if acc_info["canTrade"]==True:
                         binance_error=0
                 except:
-                    binance_error=1
-                    binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
+                    if win32_dl==1:
+                        try:
+                            gt = client.get_server_time()
+                            aa = str(gt)
+                            bb = aa.replace("{'serverTime': ","")
+                            aa = bb.replace("}","")
+                            gg=int(aa)
+                            ff=gg-10799260
+                            uu=ff/1000
+                            yy=int(uu)
+                            tt=time.localtime(yy)
+                            win32api.SetSystemTime(tt[0],tt[1],0,tt[2],tt[3],tt[4],tt[5],0)
+                        except:
+                            binance_error=1
+                            binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
+                    else:
+                        binance_error=1
+                        binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
                     
                     
                 if binance_error==0:
