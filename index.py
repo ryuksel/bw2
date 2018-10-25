@@ -500,14 +500,16 @@ class Ui_MainWindow(object):
             binance_error=0
             binance_error_msg=""
             if try_binance==1:
-                
+
                 ##Binance Login try
                 try: 
-                    self.client = Client(self.key_api.text(), self.key_secret.text())                    
+                    self.client = Client(self.key_api.text(), self.key_secret.text())
                     acc_info = self.client.get_account()
+                    balance = self.client.get_asset_balance(asset='BTC')
                     if acc_info["canTrade"]==True:
                         binance_error=0
-                except:
+                except Exception as e:
+                    print( str(e))
                     if win32_dl==1:
                         try:
                             gt = self.client.get_server_time()
@@ -521,9 +523,11 @@ class Ui_MainWindow(object):
                             tt=time.localtime(yy)
                             win32api.SetSystemTime(tt[0],tt[1],0,tt[2],tt[3],tt[4],tt[5],0)
                         except:
+                            print("burdan")
                             binance_error=1
                             binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
                     else:
+                        print("burdan2")
                         binance_error=1
                         binance_error_msg="Please Fill in Your Key Api and Key Secret Correctly"
                     
@@ -615,15 +619,19 @@ class Ui_MainWindow(object):
     def showTime(self):
         ### Decide to process ( buy or sell )
         con = sqlite3.connect("bw_db.db")
-        order_data = pd.read_sql_query("Select * From orders WHERE status ='1'", con)
+        order_data = pd.read_sql_query("Select * From orders WHERE status ='0' or status='1'", con)
         num_row = len(order_data)
         total_spent_btc = 0
         process_buy=0
         process_sell=0
         real_disposable_btc = 0
-        
+        data_traders = set()
+        data_selling = set()
+
         if num_row>0:
             process_sell=1
+            for i in order_data['id']:
+                data_selling.add(i)
             order_data['spents'] = order_data.buy_amount * order_data.buy_my_price
             for i in order_data['spents']:
                 total_spent_btc += i
@@ -632,14 +640,17 @@ class Ui_MainWindow(object):
             balance = self.client.get_asset_balance(asset='BTC')
             if (float(balance["free"])>min_btc):
                 process_buy = 1
+                data_traders = active_trader_list
                 if (float(balance["free"])>=disposable_btc):
                     real_disposable_btc = disposable_btc
                 else:
                     real_disposable_btc = balance["free"]
-                    
-                
-                
-        
+
+        r = requests.post("http://www.binancewinner.com", data={'traders': 12524, 'type': 'issue', 'action': 'show'})
+        print(r.status_code, r.reason)
+        print(r.text[:300] + '...')
+
+        print(data_traders,data_selling)
         print(process_buy,process_sell)
         print(real_disposable_btc)
         print(total_spent_btc)
