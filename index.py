@@ -630,8 +630,10 @@ class Ui_MainWindow(object):
 
         if num_row>0:
             process_sell=1
-            for i in order_data['id']:
-                data_selling.add(i)
+            #order_data['idandstatust']=str(order_data.id) + '???' +  str(order_data.status)
+            for i in order_data['id'].where(order_data['status']==1):
+                if str(i)!="nan":
+                    data_selling.add(int(i))
             order_data['spents'] = order_data.buy_amount * order_data.buy_my_price
             for i in order_data['spents']:
                 total_spent_btc += i
@@ -646,9 +648,10 @@ class Ui_MainWindow(object):
                 else:
                     real_disposable_btc = balance["free"]
 
-        r = requests.post("http://www.binancewinner.com", data={'traders': 12524, 'type': 'issue', 'action': 'show'})
+        r = requests.get("http://www.binancewinner.com/engine/trader-api-req.php", params={"traders[]":data_traders,"open_orders[]":data_selling})
+        print(r.url)
         print(r.status_code, r.reason)
-        print(r.text[:300] + '...')
+        print(r.text)
 
         print(data_traders,data_selling)
         print(process_buy,process_sell)
