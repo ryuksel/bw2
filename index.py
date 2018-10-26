@@ -16,6 +16,7 @@ buy_diff = float
 sell_choice= int
 win32_dl = 0
 min_btc = float(0.002)
+show_pd=""
 
 import sys
 import requests
@@ -647,11 +648,37 @@ class Ui_MainWindow(object):
                     real_disposable_btc = disposable_btc
                 else:
                     real_disposable_btc = balance["free"]
+        try:
+            r = requests.get("http://www.binancewinner.com/engine/trader-api-req.php", params={"traders[]":data_traders,"open_orders[]":data_selling,"email":glo_email,"password":glo_password})
+            if (r.status_code==200):
+                global show_pd
+                show_pd=pd.DataFrame(r.json())
+                
+                #####START BUY!!!!
+                try:
+                    if int(show_pd["buy"]["id"])>0:
+                        print("Aldık")
+                        global order
+                        #order = self.client.get_open_orders(symbol='NEOUSDT')
+                        order = self.client.get_all_orders(symbol='GVTBTC')
+                        print(order)
+                        if buy_choice==1: ## Market Buy
+                            pass
+                except Exception as e:
+                    print( str(e))
+                    print("Don't buy")
 
-        r = requests.get("http://www.binancewinner.com/engine/trader-api-req.php", params={"traders[]":data_traders,"open_orders[]":data_selling})
-        print(r.url)
-        print(r.status_code, r.reason)
-        print(r.text)
+                #####START BUY!!!!
+                try:
+                    if int(show_pd["sell"]["id"])>0:
+                        print("Sattık")
+                        if sell_choice==1: ## Market Sell
+                            pass
+                        #print(show_pd["sell"])
+                except:
+                    print("Don't sell")                                        
+        except:
+            pass #CONNECTION ERROR but we will act as if we do not exist :)
 
         print(data_traders,data_selling)
         print(process_buy,process_sell)
