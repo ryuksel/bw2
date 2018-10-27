@@ -21,6 +21,8 @@ show_pd=""
 import sys
 import requests
 import pandas as pd
+from decimal import Decimal
+import math
 #import time
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -658,17 +660,36 @@ class Ui_MainWindow(object):
                 try:
                     if int(show_pd["buy"]["id"])>0:
                         print("Aldık")
+                        global symbol_info
+                        symbol_info = self.client.get_symbol_info(show_pd["buy"]["coin_name"])
+                        global order_book
+                        order_book =  self.client.get_order_book(symbol=show_pd["buy"]["coin_name"])                        
+                        
+                        price_tick_size=Decimal(symbol_info["filters"][0]["tickSize"]) #Price Tick Size
+                        min_qty=symbol_info["filters"][1]["minQty"] #Minimum Quantity
+                        step_qty=symbol_info["filters"][1]["stepSize"]  #Step Quantity Size
+                        
+                        print(self.decimal_find(price_tick_size))
                         global order
                         #order = self.client.get_open_orders(symbol='NEOUSDT')
                         order = self.client.get_all_orders(symbol='GVTBTC')
-                        print(order)
+                        
+                        
+                        #print(order)
                         if buy_choice==1: ## Market Buy
-                            pass
+                            global buy_qty
+                            buy_qty=Decimal(real_disposable_btc)/Decimal(order_book["asks"][0][0])
+                            buy_qty=Decimal(buy_qty)*Decimal(0.9)
+                            buy_qty=Decimal(buy_qty)-(Decimal(buy_qty)%Decimal(min_qty))
+                            #buy_qty=math.floor(buy_qty)
+                            getcontext().prec = int(self.decimal_find(price_tick_size))
+                            print(buy_qty)
+
                 except Exception as e:
                     print( str(e))
                     print("Don't buy")
 
-                #####START BUY!!!!
+                #####START SELL!!!!
                 try:
                     if int(show_pd["sell"]["id"])>0:
                         print("Sattık")
@@ -689,7 +710,27 @@ class Ui_MainWindow(object):
         self.status_area.append("Working")
 
         print(active_trader_list)
-        
+    def decimal_find(self,x):
+        if Decimal(x)*10==1:
+            deci=1
+        elif Decimal(x)*100==1:
+            deci=2   
+        elif Decimal(x)*1000==1:
+            deci=3   
+        elif Decimal(x)*10000==1:
+            deci=4   
+        elif Decimal(x)*100000==1:
+            deci=5   
+        elif Decimal(x)*1000000==1:
+            deci=6   
+        elif Decimal(x)*10000000==1:
+            deci=7   
+        elif Decimal(x)*100000000==1:
+            deci=8   
+        elif Decimal(x)*1000000000==1:
+            deci=9
+        return deci
+            
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
