@@ -684,7 +684,10 @@ class Ui_MainWindow(object):
                             #buy_qty=math.floor(buy_qty)
                             getcontext().prec = int(self.decimal_find(price_tick_size))
                             print(buy_qty)
-
+                        elif buy_choice==2: ## Best Offer Buy
+                            pass
+                            
+                            
                 except Exception as e:
                     print( str(e))
                     print("Don't buy")
@@ -730,6 +733,33 @@ class Ui_MainWindow(object):
         elif Decimal(x)*1000000000==1:
             deci=9
         return deci
+    
+    
+    def best_offer(self,symbol,trader_price,buy_sell):
+        symbol_info = client.get_symbol_info(symbol)
+        order_book =  client.get_order_book(symbol=symbol)
+        
+        price_tick_size=Decimal(symbol_info["filters"][0]["tickSize"]) #Price Tick Size
+        min_qty=symbol_info["filters"][1]["minQty"] #Minimum Quantity
+        step_qty=symbol_info["filters"][1]["stepSize"]  #Step Quantity Size
+        symbol_status=symbol_info["status"]
+        
+        best_sell=Decimal(order_book["asks"][0][0]) + 1
+        best_buy=Decimal(order_book["bids"][0][0]) + 1
+        
+        best_buy += price_tick_size
+        best_sell -= price_tick_size
+        
+        trader_price=Decimal(trader_price)
+        
+        if (buy_sell==0):
+            b_t=best_buy 
+            b_t=str(b_t).replace("1.","0.")
+        else:
+            b_t=best_sell
+            b_t=str(b_t).replace("1.","0.")
+                
+        return b_t
             
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
