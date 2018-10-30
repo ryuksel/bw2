@@ -21,14 +21,14 @@ show_pd=""
 import sys
 import requests
 import pandas as pd
-from decimal import Decimal
-import math
-#import time
+from decimal import *
+#import math
 from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 #from PyQt5.QtCore import QTime, QTimer
 from binance.client import Client
+from binance.enums import *
 import sqlite3
 import time
 try:
@@ -680,13 +680,49 @@ class Ui_MainWindow(object):
                             global buy_qty
                             buy_qty=Decimal(real_disposable_btc)/Decimal(order_book["asks"][0][0])
                             buy_qty=Decimal(buy_qty)*Decimal(0.9)
-                            buy_qty=Decimal(buy_qty)-(Decimal(buy_qty)%Decimal(min_qty))
-                            #buy_qty=math.floor(buy_qty)
+                            buy_qty=Decimal(buy_qty)-(Decimal(buy_qty)%Decimal(min_qty))                            
                             getcontext().prec = int(self.decimal_find(price_tick_size))
+                            
+                            
+                            order_market_buy = self.client.create_test_order(
+                                    symbol=show_pd["buy"]["coin_name"],
+                                    side=SIDE_BUY,
+                                    type=ORDER_TYPE_MARKET,
+                                    quantity=buy_qty)
+                            
+                            global order_isOkey
+                            order_isOkey = self.client.get_all_orders(symbol=show_pd["buy"]["coin_name"])
+                            
+                            try:
+                                last_order = order_isOkey[-1]
+                                last_qty = order_isOkey[-1]['executedQty']
+                                last_side = last_load = order_isOkey[-1]['side'] 
+                                last_orderId = order_isOkey[-1]['orderId']
+                                last_cummulativeQuoteQty = order_isOkey[-1]['cummulativeQuoteQty']
+                                global last_price
+                                last_price = (Decimal(last_cummulativeQuoteQty)/Decimal(last_qty))
+                                last_price = format(last_price, '.9f')
+                                #last_price = str(last_price).replace("1.","0.")
+                                time_utc=str(time.time()).split(".")
+                                time_utc=time_utc[0]
+                                #print(last_side,last_qty,buy_qty)                                
+                                #order_sql_append (self,id,binance_order_id,bw_order_id,pair_coin_id,pair_coin_name,trader_id,trader_name,buy_trader_price,buy_my_price,buy_amount,sell_trader_price,sell_my_price,status,date_buy,date_sell)
+                                    
+                                try:
+                                    if (last_side=="BUY" and (last_qty<=buy_qty and last_qty>buy_qty*0.99)):
+                                        self.order_sql_append (None,last_orderId,show_pd["buy"][0],show_pd["buy"]["pair_coin"],show_pd["buy"]["coin_name"],show_pd["buy"]["uye_id"],show_pd["buy"]["uye_username"],show_pd["buy"]["buy_price"],last_price,last_qty,'0','0',1,time_utc,'0')
+                                        print("okey olmuş bu")
+                                except:
+                                    pass
+                            except Exception as e:
+                                print(e)
+                            print("dene")
+                            
                             print(buy_qty)
                         elif buy_choice==2: ## Best Offer Buy
                             pass
-                            
+                        else: ## Limit Buy
+                            pass
                             
                 except Exception as e:
                     print( str(e))
@@ -699,6 +735,10 @@ class Ui_MainWindow(object):
                         if sell_choice==1: ## Market Sell
                             pass
                         #print(show_pd["sell"])
+                        
+                        else: ##Best offer Sell
+                            pass
+                    
                 except:
                     print("Don't sell")                                        
         except:
@@ -712,7 +752,14 @@ class Ui_MainWindow(object):
         
         self.status_area.append("Working")
 
-        print(active_trader_list)
+    def order_sql_append (self,id,binance_order_id,bw_order_id,pair_coin_id,pair_coin_name,trader_id,trader_name,buy_trader_price,buy_my_price,buy_amount,sell_trader_price,sell_my_price,status,date_buy,date_sell):
+        con = sqlite3.connect("bw_db.db")
+        cursor = con.cursor()
+        cursor.execute("INSERT INTO orders VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(id,binance_order_id,bw_order_id,pair_coin_id,pair_coin_name,trader_id,trader_name,buy_trader_price,buy_my_price,buy_amount,sell_trader_price,sell_my_price,status,date_buy,date_sell))                                
+        con.commit()
+        con.close()
+
+        
     def decimal_find(self,x):
         if Decimal(x)*10==1:
             deci=1
